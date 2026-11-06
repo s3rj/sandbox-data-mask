@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomNotificationType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customNotifTypeName>Mask_Run_Finished</customNotifTypeName>
+    <description>Sent to the user who started a sandbox data mask run when the last object finishes, with the totals.</description>
+    <desktop>true</desktop>
+    <masterLabel>Mask Run Finished</masterLabel>
+    <mobile>true</mobile>
+</CustomNotificationType>

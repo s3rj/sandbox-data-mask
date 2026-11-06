@@ -1,6 +1,6 @@
 /**
  * Masks the configured fields of one object in bulk-safe chunks, records the outcome on its Mask Run record,
- * then chains to the next object in the plan.
+ * then chains to the next object in the plan. The last object's batch notifies the user who started the run.
  *
  * Runs without sharing on purpose: a mask that skipped records the running user cannot see would leave PII
  * behind. The sandbox guard and the Sandbox Data Mask Admin permission set are the access control.
@@ -13,16 +13,18 @@ public without sharing class SandboxDataMaskBatch implements Database.Batchable<
     private final Integer position;
     private final String salt;
     private final Id runId;
+    private final String runGroup;
     private Map<String, Integer> fieldLengths = new Map<String, Integer>();
     private Integer processed = 0;
     private Integer failed = 0;
     private List<String> errors = new List<String>();
 
-    public SandboxDataMaskBatch(MaskPlan plan, Integer position, String salt, Id runId) {
+    public SandboxDataMaskBatch(MaskPlan plan, Integer position, String salt, Id runId, String runGroup) {
         this.plan = plan;
         this.position = position;
         this.salt = salt;
         this.runId = runId;
+        this.runGroup = runGroup;
     }
 
     // The query is assembled from admin-managed custom metadata that validateStep() has just checked against the
@@ -37,20 +39,9 @@ public without sharing class SandboxDataMaskBatch implements Database.Batchable<
     }
 
     public void execute(Database.BatchableContext context, List<SObject> scope) {
-        MaskPlan.Step step = currentStep();
-        Map<String, MaskStrategies.Strategy> strategies = new Map<String, MaskStrategies.Strategy>();
-        for (MaskRule rule : step.rules) {
-            strategies.put(rule.key(), MaskStrategies.forName(rule.strategy));
-        }
+        Masker masker = new Masker(currentStep(), salt, fieldLengths);
         for (SObject record : scope) {
-            for (MaskRule rule : step.rules) {
-                Object original = record.get(rule.fieldApiName);
-                if (rule.preserveBlank && isBlank(original)) {
-                    continue;
-                }
-                MaskContext ctx = new MaskContext(salt, rule, fieldLengths.get(rule.fieldApiName.toLowerCase()));
-                record.put(rule.fieldApiName, strategies.get(rule.key()).mask(original, ctx));
-            }
+            masker.apply(record);
         }
         Database.DMLOptions options = new Database.DMLOptions();
         options.optAllOrNone = false;
@@ -72,16 +63,14 @@ public without sharing class SandboxDataMaskBatch implements Database.Batchable<
         AsyncApexJob job = [SELECT NumberOfErrors FROM AsyncApexJob WHERE Id = :context.getJobId() LIMIT 1];
         MaskRunLog.finish(runId, processed, failed, errors, job.NumberOfErrors);
         Boolean hasNext = position + 1 < plan.steps.size();
-        if (hasNext && !Test.isRunningTest()) { // a test context allows only one batch execution
-            SandboxDataMaskRunner.startStep(plan, position + 1, salt, null);
+        if (!hasNext) {
+            MaskRunNotifier.runFinished(runGroup);
+        } else if (!Test.isRunningTest()) { // a test context allows only one batch execution
+            SandboxDataMaskRunner.startStep(plan, position + 1, salt, null, runGroup);
         }
     }
 
     private MaskPlan.Step currentStep() {
         return plan.steps[position];
-    }
-
-    private static Boolean isBlank(Object value) {
-        return value == null || (value instanceof String && String.isBlank((String) value));
     }
 }

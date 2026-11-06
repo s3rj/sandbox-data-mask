@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Runs_With_Errors</fullName>
+    <booleanFilter>1 OR 2 OR 3</booleanFilter>
+    <columns>NAME</columns>
+    <columns>Object_API_Name__c</columns>
+    <columns>Status__c</columns>
+    <columns>Records_Processed__c</columns>
+    <columns>Records_Failed__c</columns>
+    <columns>Batch_Failures__c</columns>
+    <columns>Finished__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Completed with errors</value>
+    </filters>
+    <filters>
+        <field>Records_Failed__c</field>
+        <operation>greaterThan</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Batch_Failures__c</field>
+        <operation>greaterThan</operation>
+        <value>0</value>
+    </filters>
+    <label>Runs With Errors</label>
+</ListView>

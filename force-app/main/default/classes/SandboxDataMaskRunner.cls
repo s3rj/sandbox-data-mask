@@ -1,7 +1,7 @@
 /**
  * Entry points: anonymous Apex, Flow (invocable action), and the SandboxPostCopy hook. Builds the plan from
  * metadata, validates it synchronously so misconfiguration fails immediately, and queues the first object;
- * each object's batch chains to the next.
+ * each object's batch chains to the next. Every Mask Run record of one run shares a Run Group.
  */
 public with sharing class SandboxDataMaskRunner {
     public class MaskRunException extends Exception {
@@ -23,7 +23,7 @@ public with sharing class SandboxDataMaskRunner {
             throw new MaskRunException('Nothing to mask: there are no active Mask Rule records.');
         }
         plan.validate();
-        return startStep(plan, 0, resolveSalt(), batchSize);
+        return startStep(plan, 0, resolveSalt(), batchSize, UUID.randomUUID().toString());
     }
 
     @InvocableMethod(
@@ -37,19 +37,18 @@ public with sharing class SandboxDataMaskRunner {
     }
 
     /** Creates the audit record for one step and queues its batch. Called by run() and by the previous batch's finish(). */
-    public static Id startStep(MaskPlan plan, Integer position, String salt, Integer batchSize) {
-        Id runId = MaskRunLog.create(plan.steps[position]);
-        Database.executeBatch(new SandboxDataMaskBatch(plan, position, salt, runId), effectiveBatchSize(batchSize));
+    public static Id startStep(MaskPlan plan, Integer position, String salt, Integer batchSize, String runGroup) {
+        Id runId = MaskRunLog.create(plan.steps[position], runGroup);
+        Database.executeBatch(new SandboxDataMaskBatch(plan, position, salt, runId, runGroup), effectiveBatchSize(batchSize));
         return runId;
     }
 
     /**
      * The org salt. Generated once and stored in Mask Settings so fakes stay stable across runs. Set it in
      * production (the tool never runs there) and every refreshed sandbox inherits it, so fakes also stay
-     * stable across refreshes.
+     * stable across refreshes. The preview uses the same salt, so what it shows is what the run will write.
      */
-    @TestVisible
-    private static String resolveSalt() {
+    public static String resolveSalt() {
         Mask_Settings__c settings = Mask_Settings__c.getOrgDefaults();
         if (String.isNotBlank(settings.Salt__c)) {
             return settings.Salt__c;

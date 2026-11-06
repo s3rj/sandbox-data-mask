@@ -56,11 +56,15 @@ private class SandboxDataMaskBatchTest {
         Assert.areNotEqual('NoContactInfo', bareAfter.LastName, 'populated field still masked');
 
         Mask_Run__c run = [
-            SELECT Status__c, Object_API_Name__c, Fields_Masked__c, Records_Processed__c, Records_Failed__c, Batch_Failures__c, Batch_Job_Id__c, Started__c, Finished__c, Error_Summary__c
+            SELECT Status__c, Object_API_Name__c, Fields_Masked__c, Records_Processed__c, Records_Failed__c, Batch_Failures__c, Batch_Job_Id__c, Started__c, Finished__c, Error_Summary__c, Run_Group__c
             FROM Mask_Run__c
             WHERE Id = :runId
         ];
         Assert.areEqual('Completed', run.Status__c, 'run completed');
+        Assert.areEqual(36, run.Run_Group__c.length(), 'run group recorded');
+        Assert.areEqual('Sandbox data mask finished', MaskRunNotifier.lastTitle, 'the user was notified');
+        Assert.isTrue(MaskRunNotifier.lastBody.contains('26 records masked'), 'totals in the notification: ' + MaskRunNotifier.lastBody);
+        Assert.isNull(MaskRunNotifier.lastError, 'notification sent: ' + MaskRunNotifier.lastError);
         Assert.areEqual('Contact', run.Object_API_Name__c, 'object recorded');
         Assert.areEqual('FirstName, LastName, Email, Phone, Description', run.Fields_Masked__c, 'fields recorded');
         Assert.areEqual(26, run.Records_Processed__c.intValue(), 'every record counted');

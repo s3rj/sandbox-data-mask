@@ -13,11 +13,19 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>MaskCoverageAudit</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>MaskPlan</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>MaskPostCopy</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>MaskPreview</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -33,7 +41,15 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>MaskRunNotifier</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>MaskStrategies</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>Masker</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -99,6 +115,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Mask_Run__c.Records_Processed__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Mask_Run__c.Run_Group__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

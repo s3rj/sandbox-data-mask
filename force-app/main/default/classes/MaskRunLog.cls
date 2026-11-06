@@ -5,14 +5,15 @@ public with sharing class MaskRunLog {
     public class AccessException extends Exception {
     }
 
-    public static Id create(MaskPlan.Step step) {
+    public static Id create(MaskPlan.Step step, String runGroup) {
         if (!Schema.sObjectType.Mask_Run__c.isCreateable()) {
             throw new AccessException('You need create access to Mask Run (assign the Sandbox Data Mask Admin permission set).');
         }
         Mask_Run__c run = new Mask_Run__c(
             Object_API_Name__c = step.objectApiName,
             Fields_Masked__c = step.fieldList().abbreviate(255),
-            Status__c = 'Queued'
+            Status__c = 'Queued',
+            Run_Group__c = runGroup
         );
         insert run;
         return run.Id;
