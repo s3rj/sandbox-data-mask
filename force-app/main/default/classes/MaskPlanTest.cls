@@ -36,6 +36,14 @@ private class MaskPlanTest {
     }
 
     @IsTest
+    static void shippedRulesAreValidInThisOrg() {
+        MaskPlan plan = MaskPlan.fromMetadata();
+        Assert.isFalse(plan.steps.isEmpty(), 'the shipped rules produce a plan');
+        Assert.areEqual('Contact', plan.steps[0].objectApiName, 'Contact runs first');
+        plan.validate();
+    }
+
+    @IsTest
     static void nullIsAllowedOnNillableNonTextFields() {
         Map<String, Integer> lengths = MaskPlan.validateStep(step('Contact', 'Birthdate', 'Null'));
         Assert.isTrue(lengths.containsKey('birthdate'), 'date field accepted for Null');
