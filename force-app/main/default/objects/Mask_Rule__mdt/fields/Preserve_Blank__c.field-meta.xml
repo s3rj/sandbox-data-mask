@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Preserve_Blank__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>When checked, records where this field is already blank are left blank.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Preserve Blank</label>
+    <type>Checkbox</type>
+</CustomField>

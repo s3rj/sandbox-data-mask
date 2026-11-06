@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>One record per object per mask run: what was masked, how many records, and any errors.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <label>Mask Run</label>
+    <nameField>
+        <displayFormat>MR-{0000}</displayFormat>
+        <label>Mask Run Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Mask Runs</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

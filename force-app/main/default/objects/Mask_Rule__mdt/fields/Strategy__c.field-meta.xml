@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Strategy__c</fullName>
+    <description>How the field is masked. All strategies are deterministic for a given org salt.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Strategy</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>FirstName</fullName>
+                <default>false</default>
+                <label>First name</label>
+            </value>
+            <value>
+                <fullName>LastName</fullName>
+                <default>false</default>
+                <label>Last name</label>
+            </value>
+            <value>
+                <fullName>Email</fullName>
+                <default>false</default>
+                <label>Email</label>
+            </value>
+            <value>
+                <fullName>Phone</fullName>
+                <default>false</default>
+                <label>Phone</label>
+            </value>
+            <value>
+                <fullName>Street</fullName>
+                <default>false</default>
+                <label>Street address</label>
+            </value>
+            <value>
+                <fullName>Scramble</fullName>
+                <default>false</default>
+                <label>Scramble (keep shape)</label>
+            </value>
+            <value>
+                <fullName>Hash</fullName>
+                <default>false</default>
+                <label>Hash</label>
+            </value>
+            <value>
+                <fullName>Fixed</fullName>
+                <default>false</default>
+                <label>Fixed value</label>
+            </value>
+            <value>
+                <fullName>Null</fullName>
+                <default>false</default>
+                <label>Null</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

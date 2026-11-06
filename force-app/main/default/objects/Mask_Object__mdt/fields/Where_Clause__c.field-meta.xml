@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Where_Clause__c</fullName>
+    <description>SOQL WHERE clause without the WHERE keyword, for example IsConverted = false. Leave blank to mask every record.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Where Clause</label>
+    <required>false</required>
+    <type>TextArea</type>
+</CustomField>

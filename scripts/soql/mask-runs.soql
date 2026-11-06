@@ -1,0 +1,4 @@
+SELECT Name, Object_API_Name__c, Status__c, Records_Processed__c, Records_Failed__c, Batch_Failures__c, Started__c, Finished__c
+FROM Mask_Run__c
+ORDER BY CreatedDate DESC
+LIMIT 20
