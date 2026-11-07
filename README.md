@@ -1,6 +1,19 @@
 # sandbox-data-mask
 
+[![CI](https://github.com/s3rj/sandbox-data-mask/actions/workflows/ci.yml/badge.svg)](https://github.com/s3rj/sandbox-data-mask/actions/workflows/ci.yml)
+![Apex on API 68.0](https://img.shields.io/badge/Apex-API%2068.0-00A1E0)
+![45 tests, 97% coverage](https://img.shields.io/badge/tests-45%20passing%2C%2097%25%20coverage-brightgreen)
+[![MIT License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
+
 Deterministic PII masking for Salesforce sandboxes, driven by custom metadata, with a post-refresh hook so a sandbox is clean before the first tester logs in, a coverage audit so the rules keep up with the schema, and an audit trail so compliance can see what was done and when.
+
+**At a glance**
+
+- **The problem:** a refreshed sandbox is a copy of production, customer data included, and the one-off script that was supposed to scrub it stopped matching the schema two releases ago.
+- **What this is:** an Apex batch driven by `Mask_Rule__mdt` that replaces personal data with deterministic fakes, refuses to run anywhere but a sandbox, audits its own coverage against the schema, and writes a run record per object.
+- **Proof:** 45 tests, 97% coverage, validated in a Developer Edition org on API 68.0; the coverage audit ran live against that org's schema (its report is below).
+- **Try it:** deploy, assign `Sandbox_Data_Mask_Admin`, run `scripts/apex/audit-coverage.apex` anywhere and `scripts/apex/run-mask.apex` in a sandbox.
+- **Where to look first:** `MaskStrategies` (the nine strategies, deterministic through `Deterministic`), `MaskPlan` (validation against the describe before anything is queued), `SandboxDataMaskBatch` (bulk-safe partial-success update and the chain), `MaskCoverageAudit` (type, name, and compliance-categorization signals), and `SandboxDataMaskBatchTest` for the end-to-end run.
 
 ## Why an org needs it
 
@@ -140,6 +153,17 @@ Tests inject rules through `MaskRuleRepository.ruleOverride` because custom meta
 - **Validation before queuing**: Apex batch failures are quiet; a `ConfigException` thrown synchronously from `run()` is not.
 - **The audit reads three signals** because each misses something: types catch `Fax` whatever it is called, names catch `SSN__c` whatever its type, and the compliance categorization catches the field only the data owner knows is sensitive.
 - **A bell notification, not an email**: sandboxes default to "System email only" after a refresh, so an Apex email would be dropped. Custom notifications are delivered everywhere and link straight to the run record.
+
+## Part of a set
+
+Three Salesforce patterns generalized from production work and rebuilt from scratch with tests and CI, plus a CLI for the schema side:
+
+- [sandbox-data-mask](https://github.com/s3rj/sandbox-data-mask): this project, the data in your sandboxes
+- [integration-log-retry](https://github.com/s3rj/integration-log-retry): outbound callouts that log, retry, and recover
+- [hmac-webhook-receiver](https://github.com/s3rj/hmac-webhook-receiver): inbound webhooks that are verified, deduplicated, and reprocessable
+- [flow-hardcoded-id-scanner](https://github.com/s3rj/flow-hardcoded-id-scanner): a CI gate that finds hard-coded record Ids in Flow and other metadata
+
+More at [github.com/s3rj](https://github.com/s3rj).
 
 ## License
 
