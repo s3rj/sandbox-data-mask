@@ -54,7 +54,9 @@ sf project deploy start --target-org <sandbox>
 sf org assign permset --name Sandbox_Data_Mask_Admin --target-org <sandbox>
 ```
 
-The shipped rules cover the usual suspects: Contact and Lead names, emails, phones, and streets; Account phones and addresses; Case supplied name, email, and phone; Lead company (scrambled). Edit, deactivate, or add rules under **Setup > Custom Metadata Types > Mask Rule**.
+The shipped rules cover the usual suspects: Contact and Lead names, emails, phones, and streets; Account phones and addresses; Case supplied name, email, and phone; Lead company (scrambled). Edit, deactivate, or add rules under **Setup > Custom Metadata Types > Mask Rule**; the shipped layout shows every field:
+
+![The Contact Email Mask Rule record in Setup: object, field, strategy Email, preserve blank, order, active](docs/images/mask-rule.png)
 
 ## Run
 
