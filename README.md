@@ -11,9 +11,29 @@ Deterministic PII masking for Salesforce sandboxes, driven by custom metadata, w
 
 - **The problem:** a refreshed sandbox is a copy of production, customer data included, and the one-off script that was supposed to scrub it stopped matching the schema two releases ago.
 - **What this is:** an Apex batch driven by `Mask_Rule__mdt` that replaces personal data with deterministic fakes, refuses to run anywhere but a sandbox, audits its own coverage against the schema, and writes a run record per object.
-- **Proof:** 45 tests, 97% coverage, validated in a Developer Edition org on API 68.0; the coverage audit ran live against that org's schema (its report is below).
+- **Proof:** 45 tests, 97% coverage, validated in a Developer Edition org on API 68.0; the coverage audit ran live against that org's schema (its report is below), and a full run executed in a scratch org over 370 seeded records (the screenshots below).
 - **Try it:** deploy, assign `Sandbox_Data_Mask_Admin`, run `scripts/apex/audit-coverage.apex` anywhere and `scripts/apex/run-mask.apex` in a sandbox.
 - **Where to look first:** `MaskStrategies` (the nine strategies, deterministic through `Deterministic`), `MaskPlan` (validation against the describe before anything is queued), `SandboxDataMaskBatch` (bulk-safe partial-success update and the chain), `MaskCoverageAudit` (type, name, and compliance-categorization signals), and `SandboxDataMaskBatchTest` for the end-to-end run.
+
+## What admins see
+
+Taken in a scratch org, which counts as a sandbox, after one `SandboxDataMaskRunner.run()` over 370 seeded records with obvious personal data.
+
+**The run list.** One Mask Run per object, in rule order, with record counts and the run group that ties them together.
+
+![The Mask Runs list view: Contact 180, Lead 90, Account 41, Case 62, all Completed with 0 failed, sharing one run group](docs/images/mask-runs.png)
+
+**The bell.** When the last object finishes, the user who started the run, or who requested the refresh, gets a notification with the totals.
+
+![A Salesforce notification reading "Sandbox data mask finished: 4 objects, 373 records masked. Open Mask Runs for the details."](docs/images/notification.png)
+
+**One run.** Which fields were masked, how many records, how many failed, and the batch job id for Setup > Apex Jobs.
+
+![A Mask Run record: Contact, Completed, 180 records processed, 0 failed, fields masked FirstName, LastName, Email, Phone, MobilePhone, MailingStreet](docs/images/mask-run-record.png)
+
+**A masked contact.** Name, phones, email, and street are fakes; city, state, and account are untouched because no rule targets them. The same input always produces the same fake, so two contacts who shared a street before the run still share one after it.
+
+![A Contact record after masking: a fake name, fake phone numbers, a fake example.org email, and a fake street with the real city and state](docs/images/masked-contact.png)
 
 ## Why an org needs it
 
